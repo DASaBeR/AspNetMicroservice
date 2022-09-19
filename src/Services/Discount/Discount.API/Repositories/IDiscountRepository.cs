@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Discount.API.Repositories
 {
-	interface IDiscountRepository
+	public interface IDiscountRepository
 	{
 
 		#region " CRUD GCoupon "
@@ -20,9 +20,9 @@ namespace Discount.API.Repositories
 
 		#region " CRUD PDiscount "
 		Task<PDiscount> GetProductDiscount(string productId);
-		Task<bool> CreateProductDiscount(PDiscount pDiscount);
-		Task<bool> UpdateProductDiscount(PDiscount pDiscount);
-		Task<bool> DeleteProductDiscount(PDiscount pDiscount);
+		Task<bool> CreateProductDiscount(PDiscount discount);
+		Task<bool> UpdateProductDiscount(PDiscount discount);
+		Task<bool> DeleteProductDiscount(PDiscount discount);
 
 		#endregion
 
