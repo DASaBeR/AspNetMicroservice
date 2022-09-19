@@ -94,6 +94,9 @@ namespace Discount.API.Repositories
 			var discount = await connection
 				.QueryFirstOrDefaultAsync<PDiscount>("SELECT * FROM ProductDiscount WHERE ProductId = @ProductId" , new { ProductId = productId });
 
+			if (discount == null)
+				return new PDiscount
+				{ ProductId = "No Discount", Amount = 0, Description = "There is No Discount for This Product." };
 			return discount;
 		}
 

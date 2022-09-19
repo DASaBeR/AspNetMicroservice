@@ -53,7 +53,7 @@ namespace Discount.API.Controllers
 			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId } , discount);
 		}
 
-		[HttpPost]
+		[HttpPut]
 		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
 		public async Task<IActionResult> UpdateDiscount([FromBody] PDiscount discount)
 		{
