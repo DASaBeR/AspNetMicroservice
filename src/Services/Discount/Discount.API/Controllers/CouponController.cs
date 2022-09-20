@@ -1,5 +1,6 @@
 ﻿using Discount.API.Entities;
 using Discount.API.Repositories;
+using Discount.API.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,8 +27,8 @@ namespace Discount.API.Controllers
 		#region " Coupon "
 
 		[HttpGet]
-		[ProducesResponseType(typeof(IEnumerable<Coupon>), (int)HttpStatusCode.OK)]
-		public async Task<ActionResult<IEnumerable<Coupon>>> GetCoupons()
+		[ProducesResponseType(typeof(IEnumerable<CouponVM>), (int)HttpStatusCode.OK)]
+		public async Task<ActionResult<IEnumerable<CouponVM>>> GetCoupons()
 		{
 			var coupons = await _repository.GetCoupons();
 			if (coupons == null)
@@ -40,8 +41,8 @@ namespace Discount.API.Controllers
 		}
 
 		[HttpGet("{code}", Name = "GetCoupon")]
-		[ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
-		public async Task<ActionResult<Coupon>> GetCoupon(string code)
+		[ProducesResponseType(typeof(CouponVM), (int)HttpStatusCode.OK)]
+		public async Task<ActionResult<CouponVM>> GetCoupon(string code)
 		{
 			var coupon = await _repository.GetCoupon(code);
 			if (coupon == null)
@@ -63,7 +64,7 @@ namespace Discount.API.Controllers
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("GetCoupon", new { code = coupon.Code }, coupon);
+			return CreatedAtRoute("GetCoupon", new { code = coupon.Code } , coupon);
 		}
 
 		[HttpPut]
@@ -77,7 +78,7 @@ namespace Discount.API.Controllers
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("GetCoupon", new { code = coupon.Code }, coupon);
+			return RedirectToAction("GetCoupon" , new { code = coupon.Code });
 		}
 
 		[HttpDelete("{code}", Name = "DeleteCoupon")]

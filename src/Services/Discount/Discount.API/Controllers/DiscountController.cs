@@ -1,5 +1,6 @@
 ﻿using Discount.API.Entities;
 using Discount.API.Repositories;
+using Discount.API.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,8 +27,8 @@ namespace Discount.API.Controllers
 		#region " CRUD ProductDiscount "
 
 		[HttpGet("{productId}", Name = "GetDiscount")]
-		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
-		public async Task<ActionResult<PDiscount>> GetDiscount(string productId)
+		[ProducesResponseType(typeof(ProductDiscountVM), (int)HttpStatusCode.OK)]
+		public async Task<ActionResult<ProductDiscountVM>> GetDiscount(string productId)
 		{
 			var discount = await _repository.GetProductDiscount(productId);
 			if (discount == null)
@@ -40,8 +41,8 @@ namespace Discount.API.Controllers
 		}
 
 		[HttpPost]
-		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
-		public async Task<IActionResult> CreateDiscount([FromBody] PDiscount discount)
+		[ProducesResponseType(typeof(ProductDiscount), (int)HttpStatusCode.OK)]
+		public async Task<IActionResult> CreateDiscount([FromBody] ProductDiscount discount)
 		{
 			var resault = await _repository.CreateProductDiscount(discount);
 			if (!resault)
@@ -54,8 +55,8 @@ namespace Discount.API.Controllers
 		}
 
 		[HttpPut]
-		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
-		public async Task<IActionResult> UpdateDiscount([FromBody] PDiscount discount)
+		[ProducesResponseType(typeof(ProductDiscountVM), (int)HttpStatusCode.OK)]
+		public async Task<IActionResult> UpdateDiscount([FromBody] ProductDiscountVM discount)
 		{
 			var resault = await _repository.UpdateProductDiscount(discount);
 			if (!resault)
@@ -64,7 +65,7 @@ namespace Discount.API.Controllers
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId }, discount);
+			return RedirectToAction("GetDiscount" , new { productId = discount.ProductId });
 		}
 
 		[HttpDelete("{productId}", Name = "DeleteDiscount")]

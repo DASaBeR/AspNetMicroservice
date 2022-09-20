@@ -35,30 +35,30 @@ namespace Discount.API.Extentions
 					command.CommandText = "DROP TABLE IF EXISTS ProductDiscount,Coupon";
 					command.ExecuteNonQuery();
 
-					command.CommandText = @"CREATE TABLE Coupon(ID UUID PRIMARY KEY DEFAULT gen_random_uuid()	NOT NULL,
+					command.CommandText = @"CREATE TABLE Coupon(ID UUID PRIMARY KEY		NOT NULL,
 																											Code     Text NOT NULL UNIQUE,
 																											Description     TEXT,
 																											Percent          DOUBLE PRECISION DEFAULT 0,
 																											CreateTimeStamp		TEXT,
-																											IsExpired		BOOL);";
+																											IsExpired		BOOL	DEFAULT FALSE);";
 					command.ExecuteNonQuery();
 
-					command.CommandText = @"CREATE TABLE ProductDiscount(ID UUID PRIMARY KEY	DEFAULT gen_random_uuid()	NOT NULL,
+					command.CommandText = @"CREATE TABLE ProductDiscount(ID UUID PRIMARY KEY	NOT NULL,
 																															ProductId     VARCHAR(24) NOT NULL UNIQUE,
 																															Description     TEXT,
 																															Percent          DOUBLE PRECISION DEFAULT 0,
 																															CreateTimeStamp		TEXT,
-																															IsExpired		BOOL);";
+																															IsExpired		BOOL	DEFAULT FALSE);";
 					command.ExecuteNonQuery();
 
-					command.CommandText = "INSERT INTO Coupon (Code, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('Christmas2021', 'Christmas 2021 Offer', 20, '1632134746' , True);";
+					command.CommandText = "INSERT INTO Coupon (Id , Code, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('26b0f4e9-cd2a-4646-97a2-9fb7643d7100' , 'Christmas2021', 'Christmas 2021 Offer', 20, '1632134746' , True);";
 					command.ExecuteNonQuery();
-					command.CommandText = "INSERT INTO Coupon (Code, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('Summer2022', 'Summer 2022 Offer', 10, '1663677917' , False);";
+					command.CommandText = "INSERT INTO Coupon (Id , Code, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('bc25154e-f837-417f-91fe-c77e93b2de18' , 'Summer2022', 'Summer 2022 Offer', 10, '1663677917' , False);";
 					command.ExecuteNonQuery();
 
-					command.CommandText = "INSERT INTO ProductDiscount (ProductId, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('602d2149e773f2a3990b47f5', 'IPhone Discount', 5, '1632114146' , True);";
+					command.CommandText = "INSERT INTO ProductDiscount (Id , ProductId, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('af72b536-fae7-4edc-9fab-f2af74f9b648' , '602d2149e773f2a3990b47f5', 'IPhone Discount', 5, '1632114146' , True);";
 					command.ExecuteNonQuery();
-					command.CommandText = "INSERT INTO ProductDiscount (ProductId, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('602d2149e773f2a3990b47f7', 'Huawie Discount', 15, '1663677817' , False);";
+					command.CommandText = "INSERT INTO ProductDiscount (Id , ProductId, Description, Percent, CreateTimeStamp , IsExpired) VALUES ('4af6dd6f-0306-40f2-a11f-e7efbf70a300' , '602d2149e773f2a3990b47f7', 'Huawie Discount', 15, '1663677817' , False);";
 					command.ExecuteNonQuery();
 
 					logger.LogInformation("Migration postgresql database done.");

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Discount.API.Entities
+namespace Discount.API.ViewModels
 {
-	public class PDiscount
+	public class ProductDiscountVM
 	{
 		public Guid Id { get; set; }
 		public string ProductId { get; set; }
@@ -13,11 +13,5 @@ namespace Discount.API.Entities
 		public double Percent { get; set; }
 		public string CreateTimeStamp { get; set; }
 		public bool IsExpired { get; set; }
-
-		public PDiscount()
-		{
-			var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-			CreateTimeStamp = timestamp;
-		}
 	}
 }

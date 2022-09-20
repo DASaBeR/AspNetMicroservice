@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Discount.API.Entities
+namespace Discount.API.ViewModels
 {
-	public class Coupon
+	public class CouponVM
 	{
 		public Guid Id { get; set; }
 		public string Code { get; set; }
@@ -15,10 +14,5 @@ namespace Discount.API.Entities
 		public string CreateTimeStamp { get; set; }
 		public bool IsExpired { get; set; }
 
-		public Coupon()
-		{
-			Id = Guid.NewGuid();
-			CreateTimeStamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Discount.API.Entities;
+using Discount.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace Discount.API.Repositories
 	{
 
 		#region " CRUD PDiscount "
-		Task<PDiscount> GetProductDiscount(string productId);
-		Task<bool> CreateProductDiscount(PDiscount discount);
-		Task<bool> UpdateProductDiscount(PDiscount discount);
+		Task<ProductDiscountVM> GetProductDiscount(string productId);
+		Task<bool> CreateProductDiscount(ProductDiscount discount);
+		Task<bool> UpdateProductDiscount(ProductDiscountVM discount);
 		Task<bool> DeleteProductDiscount(string productId);
 
 		#endregion
