@@ -10,7 +10,14 @@ namespace Discount.API.Entities
 		public Guid Id { get; set; }
 		public string ProductId { get; set; }
 		public string Description { get; set; }
-		public int Amount { get; set; }
+		public double Percent { get; set; }
+		public string CreateTimeStamp { get; set; }
 		public bool IsExpired { get; set; }
+
+		public PDiscount()
+		{
+			var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+			CreateTimeStamp = timestamp;
+		}
 	}
 }

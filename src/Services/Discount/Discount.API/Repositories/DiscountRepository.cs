@@ -18,72 +18,6 @@ namespace Discount.API.Repositories
 		}
 
 
-		#region " CRUD Coupon "
-
-		public async Task<IEnumerable<Coupon>> GetCoupons()
-		{
-			using var connection = new NpgsqlConnection
-				(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-
-			var coupons = await connection
-				.QueryAsync<Coupon>("SELECT * FROM Coupon");
-
-			return coupons;
-		}
-
-		public async Task<bool> CreateCoupon(Coupon coupon)
-		{
-			using var connection = new NpgsqlConnection
-							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-
-			var affected =
-				await connection.ExecuteAsync
-						("INSERT INTO Coupon (Description , Amount , IsExpired) VALUES (@Description , @Amount , @IsExpired)",
-								new { Description = coupon.Description, Amount = coupon.Amount, IsExpired = coupon.IsExpired });
-
-			if (affected == 0)
-				return false;
-
-			return true;
-		}
-
-		public async Task<bool> UpdateCoupon(Coupon coupon)
-		{
-			using var connection = new NpgsqlConnection
-							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-
-			var affected =
-				await connection.ExecuteAsync
-						("UPDATE Coupon SET Code = @Code , Description = @Description , Amount = @Amount , IsExpired = @IsExpired WHERE Id = @Id",
-								new {Code = coupon.Code, Description = coupon.Description, Amount = coupon.Amount, IsExpired = coupon.IsExpired, Id = coupon.Id });
-
-			if (affected == 0)
-				return false;
-
-			return true;
-		}
-
-
-		public async Task<bool> DeleteCoupon(Coupon coupon)
-		{
-			using var connection = new NpgsqlConnection
-							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-
-			var affected =
-				await connection.ExecuteAsync
-						("DELETE FROM Coupon WHERE Code = @Code",
-								new { Code = coupon.Code });
-
-			if (affected == 0)
-				return false;
-
-			return true;
-		}
-
-
-		#endregion
-
-
 		#region " CRUD ProductDiscount "
 
 		public async Task<PDiscount> GetProductDiscount(string productId)
@@ -96,7 +30,7 @@ namespace Discount.API.Repositories
 
 			if (discount == null)
 				return new PDiscount
-				{ ProductId = "No Discount", Amount = 0, Description = "There is No Discount for This Product." };
+				{ ProductId = "No Discount", Percent = 0, Description = "There is No Discount for This Product." };
 			return discount;
 		}
 
@@ -107,8 +41,8 @@ namespace Discount.API.Repositories
 
 			var affected =
 				await connection.ExecuteAsync
-						("INSERT INTO ProductDiscount (ProductId , Description , Amount , IsExpired) VALUES (@ProductId , @Description , @Amount , @IsExpired)",
-								new { ProductId = discount.ProductId , Description = discount.Description , Amount = discount.Amount , IsExpired = discount.IsExpired });
+						("INSERT INTO ProductDiscount (ProductId , Description , Percent , IsExpired) VALUES (@ProductId , @Description , @Percent , @IsExpired)",
+								new { ProductId = discount.ProductId , Description = discount.Description , Percent = discount.Percent , IsExpired = discount.IsExpired });
 
 			if (affected == 0)
 				return false;
@@ -123,8 +57,8 @@ namespace Discount.API.Repositories
 
 			var affected =
 				await connection.ExecuteAsync
-						("UPDATE ProductDiscount SET ProductId = @ProductId , Description = @Description , Amount = @Amount , IsExpired = @IsExpired WHERE Id = @Id",
-								new { ProductId = discount.ProductId, Description = discount.Description, Amount = discount.Amount, IsExpired = discount.IsExpired, Id = discount.Id });
+						("UPDATE ProductDiscount SET ProductId = @ProductId , Description = @Description , Percent = @Percent , IsExpired = @IsExpired WHERE Id = @Id",
+								new { ProductId = discount.ProductId, Description = discount.Description, Percent = discount.Percent, IsExpired = discount.IsExpired, Id = discount.Id });
 
 			if (affected == 0)
 				return false;
@@ -132,15 +66,15 @@ namespace Discount.API.Repositories
 			return true;
 		}
 
-		public async Task<bool> DeleteProductDiscount(PDiscount discount)
+		public async Task<bool> DeleteProductDiscount(string productId)
 		{
 			using var connection = new NpgsqlConnection
 							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
 			var affected =
 				await connection.ExecuteAsync
-						("DELETE FROM Coupon WHERE Code = @Code",
-								new { ProductId = discount.ProductId });
+						("DELETE FROM ProductDiscount WHERE ProductId = @ProductId",
+								new { ProductId = productId });
 
 			if (affected == 0)
 				return false;

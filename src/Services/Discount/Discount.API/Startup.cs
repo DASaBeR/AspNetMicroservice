@@ -35,6 +35,7 @@ namespace Discount.API
 
 			#region " IoC "
 			services.AddScoped<IDiscountRepository, DiscountRepository>();
+			services.AddScoped<ICouponRepository, CouponRepository>();
 			#endregion
 		}
 

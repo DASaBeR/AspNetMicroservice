@@ -17,15 +17,15 @@ namespace Discount.API.Controllers
 	{
 		private readonly IDiscountRepository _repository;
 		private readonly ILogger<DiscountController> _logger;
-		public DiscountController(IDiscountRepository repository , ILogger<DiscountController> logger)
+		public DiscountController(IDiscountRepository repository, ILogger<DiscountController> logger)
 		{
 			_repository = repository ?? throw new ArgumentNullException(nameof(repository));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		#region " ProductDiscount "
+		#region " CRUD ProductDiscount "
 
-		[HttpGet("{productId}" , Name = "GetDiscount")]
+		[HttpGet("{productId}", Name = "GetDiscount")]
 		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
 		public async Task<ActionResult<PDiscount>> GetDiscount(string productId)
 		{
@@ -33,7 +33,7 @@ namespace Discount.API.Controllers
 			if (discount == null)
 			{
 				_logger.LogError($"Product with id {productId} dose not have discount.");
-				return NoContent();
+				return NotFound();
 			}
 
 			return Ok(discount);
@@ -46,11 +46,11 @@ namespace Discount.API.Controllers
 			var resault = await _repository.CreateProductDiscount(discount);
 			if (!resault)
 			{
-				_logger.LogError($"Something went wrong with saving discount for product with id : {discount.Id}.");
+				_logger.LogError($"Something went wrong with saving discount for product with id : {discount.ProductId}.");
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId } , discount);
+			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId }, discount);
 		}
 
 		[HttpPut]
@@ -64,18 +64,18 @@ namespace Discount.API.Controllers
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId } , discount);
+			return CreatedAtRoute("GetDiscount", new { productId = discount.ProductId }, discount);
 		}
 
-		[HttpDelete]
-		[ProducesResponseType(typeof(PDiscount), (int)HttpStatusCode.OK)]
-		public async Task<IActionResult> DeleteDiscount([FromBody] PDiscount discount)
+		[HttpDelete("{productId}", Name = "DeleteDiscount")]
+		[ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+		public async Task<IActionResult> DeleteDiscount(string productId)
 		{
-			var resault = await _repository.DeleteProductDiscount(discount);
+			var resault = await _repository.DeleteProductDiscount(productId);
 			if (!resault)
 			{
-				_logger.LogError($"Something went wrong with deleting product with id : {discount.ProductId}.");
-				return BadRequest();
+				_logger.LogError($"Something went wrong with deleting product with id : {productId}.");
+				return NotFound();
 			}
 
 			return Ok();
