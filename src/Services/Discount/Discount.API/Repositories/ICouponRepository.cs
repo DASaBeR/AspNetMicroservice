@@ -15,7 +15,7 @@ namespace Discount.API.Repositories
 		Task<IEnumerable<CouponVM>> GetCoupons();
 		Task<CouponVM> GetCoupon(string code);
 		Task<bool> CreateCoupon(Coupon coupon);
-		Task<bool> UpdateCoupon(Coupon coupon);
+		Task<bool> UpdateCoupon(CouponVM coupon);
 		Task<bool> DeleteCoupon(string code);
 
 		#endregion

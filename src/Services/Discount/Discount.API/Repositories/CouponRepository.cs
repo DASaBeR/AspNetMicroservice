@@ -56,7 +56,7 @@ namespace Discount.API.Repositories
 			return true;
 		}
 
-		public async Task<bool> UpdateCoupon(Coupon coupon)
+		public async Task<bool> UpdateCoupon(CouponVM coupon)
 		{
 			using var connection = new NpgsqlConnection
 							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));

@@ -56,7 +56,7 @@ namespace Discount.Grpc.Repositories
 			return true;
 		}
 
-		public async Task<bool> UpdateCoupon(Coupon coupon)
+		public async Task<bool> UpdateCoupon(CouponVM coupon)
 		{
 			using var connection = new NpgsqlConnection
 							(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
@@ -80,8 +80,8 @@ namespace Discount.Grpc.Repositories
 
 			var affected =
 				await connection.ExecuteAsync
-						("DELETE FROM Coupon WHERE Code = @Code",
-								new { Code = code });
+						("DELETE FROM Coupon WHERE Code = @Code OR Id = @Id",
+								new { Code = code , Id = code });
 
 			if (affected == 0)
 				return false;

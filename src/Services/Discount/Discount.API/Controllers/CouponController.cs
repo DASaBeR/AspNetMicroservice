@@ -69,7 +69,7 @@ namespace Discount.API.Controllers
 
 		[HttpPut]
 		[ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
-		public async Task<IActionResult> UpdateCoupon([FromBody] Coupon coupon)
+		public async Task<IActionResult> UpdateCoupon([FromBody] CouponVM coupon)
 		{
 			var resault = await _repository.UpdateCoupon(coupon);
 			if (!resault)
