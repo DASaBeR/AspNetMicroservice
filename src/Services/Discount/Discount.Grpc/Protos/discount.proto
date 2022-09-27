@@ -37,7 +37,7 @@ message ProductDiscountModel{
 	string id = 1;
 	string productId = 2;
 	string description = 3;
-	double precent = 4;
+	double percent = 4;
 	string createTimeStamp = 5;
 	bool isExpired = 6;
 

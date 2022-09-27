@@ -1,4 +1,6 @@
+using Basket.API.GrpcServices;
 using Basket.API.Repositories;
+using Discount.Grpc.Protos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +41,13 @@ namespace Basket.API
 
 			#region " IoC "
 
+			// General Configuration
 			services.AddScoped<IBasketRepository, BasketRepository>();
+
+			//Grpc Configuration
+			services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
+				(option => option.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
+			services.AddScoped<DiscountGrpcService>();
 
 			#endregion
 

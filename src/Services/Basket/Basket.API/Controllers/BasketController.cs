@@ -1,4 +1,5 @@
 ﻿using Basket.API.Entities;
+using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,12 @@ namespace Basket.API.Controllers
 	public class BasketController : ControllerBase
 	{
 		private readonly IBasketRepository _repository;
+		private readonly DiscountGrpcService _discountGrpcServices;
 		private readonly ILogger<BasketController> _logger;
-		public BasketController(IBasketRepository repository, ILogger<BasketController> logger)
+		public BasketController(IBasketRepository repository, DiscountGrpcService discountGrpcService, ILogger<BasketController> logger)
 		{
 			_repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			_discountGrpcServices = discountGrpcService ?? throw new ArgumentNullException(nameof(discountGrpcService));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
@@ -37,6 +40,16 @@ namespace Basket.API.Controllers
 		{
 			// TODO : Communicate with Discount.Grpc
 			// and Calculate latest prices of product into shopping cart
+			//consume Discount Grpc
+			foreach (var item in basket.Items)
+			{
+				var discount = await _discountGrpcServices.GetDiscount(item.ProductId);
+				if (!discount.IsExpired)
+				{
+					item.Price = item.Price - (item.Price * Convert.ToDecimal(discount.Percent / 100));
+				}
+			}
+
 			return Ok(await _repository.UpdateBasket(basket));
 		}
 

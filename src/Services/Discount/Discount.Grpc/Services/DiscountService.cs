@@ -33,9 +33,9 @@ namespace Discount.Grpc.Services
 				throw new RpcException(new Status(StatusCode.NotFound, $"Discount for product with id : {request.ProductId} dose not exist."));
 			}
 			_logger.LogInformation($"Discount is retrieved for ProductId : {discount.ProductId} , Percent : {discount.Percent}");
-
-			var discountModel = _mapper.Map<ProductDiscountModel>(discount);
-			return discountModel;
+			
+				var discountModel = _mapper.Map<ProductDiscountModel>(discount);
+				return discountModel;
 		}
 
 		public override async Task<ProductDiscountModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
