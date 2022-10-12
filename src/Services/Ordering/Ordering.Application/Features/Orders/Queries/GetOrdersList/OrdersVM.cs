@@ -1,13 +1,12 @@
-﻿using Ordering.Domain.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ordering.Domain.Entities
+namespace Ordering.Application.Features.Orders.Queries.GetOrdersList
 {
-	public class Order : EntityBase
+	public class OrdersVM
 	{
 		public Guid Id { get; set; }
 		public string UserName { get; set; }

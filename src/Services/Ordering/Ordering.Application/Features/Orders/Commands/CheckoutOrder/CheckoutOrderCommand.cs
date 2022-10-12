@@ -1,15 +1,14 @@
-﻿using Ordering.Domain.Common;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ordering.Domain.Entities
+namespace Ordering.Application.Features.Orders.Commands.CheckoutOrder
 {
-	public class Order : EntityBase
+	public class CheckoutOrderCommand : IRequest<Guid>
 	{
-		public Guid Id { get; set; }
 		public string UserName { get; set; }
 		public decimal TotalPrice { get; set; }
 
