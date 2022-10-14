@@ -8,9 +8,11 @@ namespace Ordering.Domain.Common
 {
 	public abstract class EntityBase
 	{
+		public int Id { get; protected set; }
+		public Guid Guid { get; set; }
 		public string CreatedBy { get; set; }
-		public DateTime CreatedDate { get; set; }
+		public long CreatedDate { get; set; }
 		public string LastModifiedBy { get; set; }
-		public DateTime? LastModifiedDate { get; set; }
+		public long? LastModifiedDate { get; set; }
 	}
 }
