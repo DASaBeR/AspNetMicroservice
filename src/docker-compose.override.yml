@@ -10,7 +10,6 @@ services:
     volumes: 
       - mongo_data:/data/db
   
-
   basketdb:
     container_name: basketdb
     restart: always
@@ -29,6 +28,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/ 
 
+  orderdb:
+    container_name: orderdb
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "M.saberi13771377"
+    restart: always
+    ports:
+      - "1433:1433"
+
   pgadmin:
     container_name: pgadmin
     environment:
@@ -40,15 +48,15 @@ services:
     volumes:
       - pgadmin_data:/root/.pgadmin 
 
-  portainer:
-    container_name: portainer
-    restart: always
-    ports:
-      - "8080:8080"
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+  # portainer:
+  #   container_name: portainer
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #     - "9000:9000"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainer_data:/data
 
 
 
@@ -56,32 +64,44 @@ services:
     container_name: catalog.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      #- ASPNETCORE_HTTPS_PORTS=8081
+      #- DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+      #- DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
     depends_on:
       - catalogdb
     ports:
-      - "8000:80"
+      - "8000:8080"
 
   basket.api:
     container_name: basket.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      #- ASPNETCORE_HTTPS_PORTS=8081
+      #- DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+      #- DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "GrpcSettings:DiscountUrl=http://discount.grpc"
     depends_on:
       - basketdb
     ports:
-      - "8001:80"
+      - "8001:8080"
 
   discount.api:
     container_name: discount.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      #- ASPNETCORE_HTTPS_PORTS=8081
+      #- DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+      #- DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
     depends_on:
       - discountdb
     ports:
-      - "8002:80"
+      - "8002:8080"
 
 
   discount.grpc:
@@ -92,5 +112,23 @@ services:
     depends_on:
       - discountdb
     ports:
-      - "8003:80"
+      - "8003:8080"
+
+
+  ordering.api:
+    container_name: ordering.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:Database=Server=orderdb;Database=OrderDb;User Id=sa;Password=M.saberi13771377;Encrypt=False;TrustServerCertificate=True"
+      #- ASPNETCORE_HTTPS_PORTS=8081
+      #- DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+      #- DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
+    depends_on: 
+      - orderdb
+    ports:
+      - "8004:8080"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
