@@ -1,12 +1,12 @@
-﻿using Basket.API.Entities;
+﻿using AutoMapper;
+using Basket.API.Entities;
 using Basket.API.GrpcServices;
 using Basket.API.Repositories;
-using Microsoft.AspNetCore.Http;
+using EventBus.Messages.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,12 +20,17 @@ namespace Basket.API.Controllers
 		private readonly DiscountGrpcService _discountGrpcServices;
 		private readonly CouponGrpcService _couponGrpcService;
 		private readonly ILogger<BasketController> _logger;
-		public BasketController(IBasketRepository repository, DiscountGrpcService discountGrpcService, CouponGrpcService couponGrpcService, ILogger<BasketController> logger)
+		private readonly IMapper _mapper;
+		private readonly IPublishEndpoint _publishEndpoint;
+
+		public BasketController(IBasketRepository repository, DiscountGrpcService discountGrpcServices, CouponGrpcService couponGrpcService, ILogger<BasketController> logger, IMapper mapper, IPublishEndpoint publishEndpoint)
 		{
 			_repository = repository ?? throw new ArgumentNullException(nameof(repository));
-			_discountGrpcServices = discountGrpcService ?? throw new ArgumentNullException(nameof(discountGrpcService));
+			_discountGrpcServices = discountGrpcServices ?? throw new ArgumentNullException(nameof(discountGrpcServices));
 			_couponGrpcService = couponGrpcService ?? throw new ArgumentNullException(nameof(couponGrpcService));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+			_publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
 		}
 
 		[HttpGet("{userName}", Name = "GetBasket")]
@@ -65,7 +70,7 @@ namespace Basket.API.Controllers
 
 		[HttpPost("{userName}", Name = "CouponDiscount")]
 		[ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
-		public async Task<ActionResult<ShoppingCart>> CouponDiscount(string userName , [FromBody] string couponCode)
+		public async Task<ActionResult<ShoppingCart>> CouponDiscount(string userName, [FromBody] string couponCode)
 		{
 
 			var basket = await _repository.GetBasket(userName);
@@ -83,6 +88,27 @@ namespace Basket.API.Controllers
 
 			return Ok(await _repository.UpdateBasket(basket));
 		}
+
+		[Route("[action]")]
+		[HttpPost]
+		[ProducesResponseType((int)HttpStatusCode.Accepted)]
+		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+		public async Task<IActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
+		{
+			var userBasket = await _repository.GetBasket(basketCheckout.UserName);
+			if (userBasket == null)
+				return BadRequest();
+
+			var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout);
+			eventMessage.TotalPrice = userBasket.TotalPrice;
+			await _publishEndpoint.Publish(eventMessage);
+
+
+			await _repository.DeleteBasket(basketCheckout.UserName);
+
+			return Accepted();
+		}
+
 
 	}
 }
