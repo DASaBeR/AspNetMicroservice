@@ -1,14 +1,12 @@
-﻿using Discount.Grpc.Repositories;
+﻿using Discount.Grpc.Mapper;
+using Discount.Grpc.Repositories;
 using Discount.Grpc.Services;
+using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Discount.Grpc
 {
@@ -20,8 +18,15 @@ namespace Discount.Grpc
 		{
 			services.AddGrpc();
 
+			// Create Mapster configuration
+			var config = TypeAdapterConfig.GlobalSettings;
+			new DiscountMappingConfig().Register(config);
+			new CouponMappingConfig().Register(config);
+
+			// Register Mapster services
+			services.AddSingleton(config);
+
 			#region " IoC "
-			services.AddAutoMapper(typeof(Startup));
 			services.AddScoped<IDiscountRepository, DiscountRepository>();
 			services.AddScoped<ICouponRepository, CouponRepository>();
 			#endregion
@@ -44,8 +49,8 @@ namespace Discount.Grpc
 
 				endpoints.MapGet("/", async context =>
 							{
-						await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-					});
+								await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+							});
 			});
 		}
 	}

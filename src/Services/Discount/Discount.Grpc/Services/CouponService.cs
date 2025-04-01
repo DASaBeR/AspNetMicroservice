@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Discount.Grpc.Protos;
+﻿using Discount.Grpc.Protos;
 using Discount.Grpc.Repositories;
 using Discount.Grpc.ViewModels;
 using Discount.Grps.Entities;
 using Grpc.Core;
+using Mapster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,13 +15,11 @@ namespace Discount.Grpc.Services
 	public class CouponService : CouponProtoService.CouponProtoServiceBase
 	{
 		private readonly ICouponRepository _repository;
-		private readonly IMapper _mapper;
 		private readonly ILogger<CouponService> _logger;
 
-		public CouponService(ICouponRepository repository, IMapper mapper, ILogger<CouponService> logger)
+		public CouponService(ICouponRepository repository, ILogger<CouponService> logger)
 		{
 			_repository = repository ?? throw new ArgumentNullException(nameof(repository));
-			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
@@ -34,7 +32,7 @@ namespace Discount.Grpc.Services
 			}
 			_logger.LogInformation($"{coupons.Count()} coupons found.");
 
-			var couponsModel = _mapper.Map<IEnumerable<CouponModel>>(coupons);
+			var couponsModel = coupons.Adapt<IEnumerable<CouponModel>>();
 
 			CouponsResponse response = new CouponsResponse();
 			response.Coupons.AddRange(couponsModel);
@@ -50,13 +48,13 @@ namespace Discount.Grpc.Services
 			}
 			_logger.LogInformation($"Coupon is retrieved with code : {coupon.Code} , Percent : {coupon.Percent}");
 
-			var couponModel = _mapper.Map<CouponModel>(coupon);
+			var couponModel = coupon.Adapt<CouponModel>();
 			return couponModel;
 		}
 
 		public override async Task<CouponModel> CreateCoupon(CreateCouponRequest request, ServerCallContext context)
 		{
-			var coupon = _mapper.Map<Coupon>(request.Coupon);
+			var coupon = request.Adapt<Coupon>();
 			var result = await _repository.CreateCoupon(coupon);
 			if (!result)
 			{
@@ -64,13 +62,13 @@ namespace Discount.Grpc.Services
 			}
 			_logger.LogInformation($"Coupon with code: {coupon.Code} , percentage: {coupon.Code} have been created.");
 
-			var couponModel = _mapper.Map<CouponModel>(coupon);
+			var couponModel = coupon.Adapt<CouponModel>();
 			return couponModel;
 		}
 
 		public override async Task<CouponModel> UpdateCoupon(UpdateCouponRequest request, ServerCallContext context)
 		{
-			var coupon = _mapper.Map<CouponVM>(request.Coupon);
+			var coupon = request.Adapt<CouponVM>();
 			var result = await _repository.UpdateCoupon(coupon);
 			if (!result)
 			{
@@ -78,7 +76,7 @@ namespace Discount.Grpc.Services
 			}
 			_logger.LogInformation($"Coupon with Id: {coupon.Id} have been updated. Coupon Code : {coupon.Code}");
 
-			var couponModel = _mapper.Map<CouponModel>(coupon);
+			var couponModel = coupon.Adapt<CouponModel>();
 			return couponModel;
 		}
 
