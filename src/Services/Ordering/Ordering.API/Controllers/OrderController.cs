@@ -7,7 +7,6 @@ using Ordering.Application.Features.Orders.Commands.UpdateOrder;
 using Ordering.Application.Features.Orders.Queries.GetOrdersList;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -32,8 +31,6 @@ namespace Ordering.API.Controllers
 			var orders = await _mediator.Send(query);
 			return Ok(orders);
 		}
-
-		#region " CRUD "
 
 		[HttpPost(Name = "CheckoutOrder")]
 		[ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
@@ -64,8 +61,6 @@ namespace Ordering.API.Controllers
 			return NoContent();
 		}
 
-		
-		#endregion
 
 	}
 }
