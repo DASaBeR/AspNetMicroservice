@@ -6,14 +6,14 @@ using Ocelot.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
-
 
 
 builder.Services.AddOcelot();
 builder.Services.AddLogging();
+builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true);
 
 
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
